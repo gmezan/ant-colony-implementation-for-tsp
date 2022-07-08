@@ -56,6 +56,9 @@ class AntColonyOptimizationTSP:
 
         return self.terminate
 
+    def are_ants_done(self):
+        return np.all(np.array([ant.done for ant in self.ants], dtype=bool) == True)
+
     def construct_solutions(self):
         # empty ant
         for k in range(self.__M):

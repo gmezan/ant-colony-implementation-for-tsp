@@ -1,94 +1,57 @@
-from TSP.AntColonyOptimizationTSP import AntColonyOptimizationTSP as ACO
-from TSP.Ant import Ant
+from TSP.acs_tsp import AcsTsp
+from TSP.Ant import *
 from utils import *
 import numpy as np
 import pandas as pd
 
-DEFAULT_DIST = 10000
-INSTANCE = 'resources/instance0.csv'
+DEFAULT_DIST = 1000000
+INSTANCE = 'resources/instance1.csv'
 NUMBER_OF_ANTS = 10
+N_ITERS = 200
+ALPHA = 0.7
+BETA = 1.2
+RHO = 0.35
 
-""" procedure ACOforTSP
-        InitializeData
-        while (not terminate) do
-            ConstructSolutions
-            LocalSearch
-            UpdateStatistics
-            UpdatePheromoneTrails
-        end-while
-    end-procedure """
-def aco_for_tsp(instance: str) -> None:
-    # ---- InitializeData ----
-    aco = initialize_data(instance, 0, 3)
 
-    # ---- while (not terminate) do ----
+def acs_for_tsp(instance: str) -> None:
+    print(">> Solving TSP with ACS")
+    aco, graph, nodes = initialize_data(instance)
+
+    aco.init_random_pheromone_trails()
+
     while(not aco.is_terminate()):
+        aco.start_ants()
 
-        # ---- ConstructSolutions ----
-        aco.construct_solutions()
-        # ---- LocalSearch ----
+        while(not aco.are_ants_done()):
+            aco.move_ants()
 
-        # ---- UpdateStatistics ----
+        aco.global_update_trails()
 
-        # ---- UpdatePheromoneTrails ----
+    print("DONE!")
+    final_tour = [nodes[t] for t in aco.best_tour]
+    print("Final tour: " + str(final_tour))
+    print("Length: " + str(aco.best_tour_length))
+    plot_solution(graph, final_tour)
 
 
 # procedure InitializeData
-def initialize_data(instance: str, source_node, target_node) -> ACO:
-
-    # ReadInstance
-    graph, nodes = read_instance(instance)
-    plot_graph(graph)
+def initialize_data(instance: str):
+    graph, nodes = read_instance(instance) # ReadInstance
     
     # ComputeDistances
     N = len(nodes)
     d = np.ones((N,N)) * DEFAULT_DIST
     for key, value in graph.items():
-        src = key[0]
-        dst = key[1]
-
-        src_idx = nodes.index(src)
-        dst_idx = nodes.index(dst)
+        src_idx = nodes.index(key[0])
+        dst_idx = nodes.index(key[1])
 
         d[src_idx][dst_idx] = value
         d[dst_idx][src_idx] = value
 
-    print("\ninitialize_data: ComputeDistances")
-    print(d)
-
-
-    # ComputeNearestNeighborLists
-    l_nn_list = []
-    for row in d:
-        df_d = pd.DataFrame({'d_i': list(row), 'i': range(len(row))}).sort_values(by='d_i', ascending=True)
-        l_nn_list.append(df_d['i'].to_list())
-
-    nn_list = np.array(l_nn_list)
-    print("\ninitialize_data: ComputeNearestNeighborLists")
-    print(nn_list)
-
-    # ComputeChoiceInformation
-    pheromone = np.zeros((N,N))
-    choice_info = np.zeros((N,N))
-
-    # InitializeAnts
-    M = NUMBER_OF_ANTS
-
     # InitializeParameters
-    alpha = 0.5
-    beta = 0.5
-    rho = 0.5
-    max_iter = 100000
+    aco = AcsTsp(d, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=ALPHA, beta=BETA, rho=RHO)
 
-    aco = ACO(d, nn_list, pheromone, choice_info, M, max_iter, alpha, beta, rho)
-    aco.source = source_node
-    aco.target = target_node
-
-    # InitializeStatistics
-
-    # TODO: compute time, mem, etc
-
-    return aco
+    return aco, graph, nodes
 
 
-aco_for_tsp(INSTANCE)
+acs_for_tsp(INSTANCE)
