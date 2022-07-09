@@ -6,11 +6,11 @@ import pandas as pd
 
 DEFAULT_DIST = 1000000
 INSTANCE = 'resources/instance1.csv'
-NUMBER_OF_ANTS = 75
-N_ITERS = 250
-ALPHA = 0.9
-BETA = 1.1
-RHO = 0.05
+NUMBER_OF_ANTS = 20
+N_ITERS = 100
+ALPHA = 1.0
+BETA = 1.2
+RHO = 0.03
 
 evolution = []
 ants_evol = []

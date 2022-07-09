@@ -132,4 +132,5 @@ def plot_results(graph: dict, final_tour: list, evolution, ants_evol):
     plt.subplot(1, 2, 2) # index 2
     plt.plot(evolution, color='b')
     plt.plot(ants_evol, color='r')
+    plt.legend(["Best tour", "Average ant tour"])
     plt.show()
