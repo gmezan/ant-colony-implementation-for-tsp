@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 import csv
 
 def plot_graph(graph: dict):
@@ -45,12 +46,12 @@ def plot_solution(graph: dict, final_tour: list):
     # nodes
     nx.draw_networkx_nodes(G, pos, node_size=700)
     # edges
-    nx.draw_networkx_edges(G, pos, edgelist=edges, width=2)
-    nx.draw_networkx_edges(G, pos, edgelist=edges_solution, width=4, alpha=0.7, edge_color="y")
+    nx.draw_networkx_edges(G, pos, edgelist=edges, width=1.2)
+    nx.draw_networkx_edges(G, pos, edgelist=edges_solution, width=2.5, alpha=0.9, edge_color="y")
     
 
     # node labels
-    nx.draw_networkx_labels(G, pos, font_weight='normal', font_size=12, font_family="sans-serif")
+    nx.draw_networkx_labels(G, pos, font_weight='normal', font_size=10, font_family="sans-serif")
     # edge weight labels
     edge_labels = nx.get_edge_attributes(G, "weight")
     nx.draw_networkx_edge_labels(G, pos, edge_labels)
@@ -60,6 +61,25 @@ def plot_solution(graph: dict, final_tour: list):
     plt.axis("off")
     plt.tight_layout()
     plt.show()
+
+
+def plot_evolution(evolution):
+    plt.plot(evolution)
+    plt.show()
+
+
+def build_instance(nodes, name, num = 20):
+    #nodes = "abcdefghijklmnopqrstuvwxyz"
+    chooser = list(range(1,num))
+    name = "resources/" + name + ".csv"
+
+    with open(name, 'w') as f:
+        writer = csv.writer(f)
+        for s in nodes:
+            for t in nodes:
+                if s != t:
+                    writer.writerow([s,t,np.random.choice(chooser)])
+
 
 # csv: source,destination,length
 def read_instance(name: str) -> tuple:
@@ -85,3 +105,31 @@ def read_instance(name: str) -> tuple:
                 nodes.append(dst)
 
     return graph, nodes
+
+
+def plot_results(graph: dict, final_tour: list, evolution, ants_evol):
+    plt.subplot(1, 2, 1) # row 1, col 2 index 1
+    G = nx.Graph()
+
+    for key, value in graph.items():
+        G.add_edge(key[0], key[1], weight=value)
+
+    edges = [(u, v) for (u, v, d) in G.edges(data=True)]
+    edges_solution = [(final_tour[i], final_tour[i + 1]) for i in range(len(final_tour) - 1)]
+    pos = nx.spring_layout(G, seed=1)  # positions for all nodes - seed for reproducibility
+    nx.draw_networkx_nodes(G, pos, node_size=700)
+    nx.draw_networkx_edges(G, pos, edgelist=edges, width=1.2)
+    nx.draw_networkx_edges(G, pos, edgelist=edges_solution, width=2.5, alpha=0.9, edge_color="y")
+    nx.draw_networkx_labels(G, pos, font_weight='normal', font_size=10, font_family="sans-serif")
+    edge_labels = nx.get_edge_attributes(G, "weight")
+    nx.draw_networkx_edge_labels(G, pos, edge_labels)
+
+    ax = plt.gca()
+    ax.margins(0.08)
+    plt.axis("off")
+    plt.tight_layout()
+
+    plt.subplot(1, 2, 2) # index 2
+    plt.plot(evolution, color='b')
+    plt.plot(ants_evol, color='r')
+    plt.show()

@@ -6,12 +6,14 @@ import pandas as pd
 
 DEFAULT_DIST = 1000000
 INSTANCE = 'resources/instance1.csv'
-NUMBER_OF_ANTS = 10
-N_ITERS = 200
-ALPHA = 0.7
-BETA = 1.2
-RHO = 0.35
+NUMBER_OF_ANTS = 75
+N_ITERS = 250
+ALPHA = 0.9
+BETA = 1.1
+RHO = 0.05
 
+evolution = []
+ants_evol = []
 
 def acs_for_tsp(instance: str) -> None:
     print(">> Solving TSP with ACS")
@@ -25,13 +27,16 @@ def acs_for_tsp(instance: str) -> None:
         while(not aco.are_ants_done()):
             aco.move_ants()
 
-        aco.global_update_trails()
+        ants_evol.append(np.mean([ant.tour_length for ant in aco.ants if ant.tour_length < DEFAULT_DIST]))
 
-    print("DONE!")
+        aco.global_update_trails()
+        evolution.append(aco.best_tour_length)
+
     final_tour = [nodes[t] for t in aco.best_tour]
-    print("Final tour: " + str(final_tour))
+    print("\nFinal tour: " + str(final_tour))
     print("Length: " + str(aco.best_tour_length))
-    plot_solution(graph, final_tour)
+    #plot_solution(graph=graph, final_tour=final_tour)
+    plot_results(graph=graph, final_tour=final_tour, evolution=evolution, ants_evol=ants_evol)
 
 
 # procedure InitializeData
