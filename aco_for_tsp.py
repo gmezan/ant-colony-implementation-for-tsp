@@ -15,6 +15,8 @@ RHO = 0.03
 evolution = []
 ants_evol = []
 
+# Solves: Fin Hamiltonian cycle of G = (V,E) for TSP
+# https://mathworld.wolfram.com/HamiltonianCycle.html
 def acs_for_tsp(instance: str) -> None:
     print(">> Solving TSP with ACS")
     aco, graph, nodes = initialize_data(instance)

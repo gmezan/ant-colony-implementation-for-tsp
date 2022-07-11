@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import csv
+import matplotlib.gridspec as gridspec
+
 
 def plot_graph(graph: dict):
     G = nx.Graph()
@@ -133,4 +135,30 @@ def plot_results(graph: dict, final_tour: list, evolution, ants_evol):
     plt.plot(evolution, color='b')
     plt.plot(ants_evol, color='r')
     plt.legend(["Best tour", "Average ant tour"])
+    plt.show()
+
+def plot_subset_solution(acs, evolution):
+    plt.subplot(1, 2, 1) # row 1, col 2 index 1
+    plt.bar(range(len(acs.pheromone)), acs.pheromone)
+
+    plt.subplot(1, 2, 2) # index 2
+    plt.plot(evolution, color='b')
+    #plt.plot(ants_evol, color='r')
+    #plt.legend(["Best tour", "Average ant tour"])
+    plt.show()
+
+def plot_subset_solution2(acs, evolution, ants_evol):
+    gs = gridspec.GridSpec(2, 2)
+
+    plt.figure()
+    ax = plt.subplot(gs[0, 0]) # row 0, col 0
+    plt.bar(range(len(acs.pheromone)), acs.pheromone)
+
+    ax = plt.subplot(gs[0, 1]) # row 0, col 1
+    plt.plot(evolution, color='b')
+    plt.plot(ants_evol, color='r')
+
+    ax = plt.subplot(gs[1, :]) # row 1, span all columns
+    plt.plot(acs.pheromones)
+
     plt.show()
