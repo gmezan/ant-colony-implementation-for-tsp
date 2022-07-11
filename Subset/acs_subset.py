@@ -98,43 +98,30 @@ class AsSubset:
         return np.all(np.array([ant.done for ant in self.ants], dtype=bool) == True)
 
     # add item at ant ants[k]
-    def add_item(self, k: int) -> bool:
-        x = None
+    def add_item(self, k: int):
         if not np.any(self.calculate_allowed(k)):
             self.ants[k].done = True
-            return False
+            return
         
         ant_r = self.ants[k]
 
         if not np.any(ant_r.s):
-            #print(ant_r.allowed)
-            #eta_aux = self.p / self.compute_avg_tightness_delta(ant_r.s)
             # VARIATION choose random for first pick
-            x = np.random.choice(np.where(self.ants[k].allowed==True)[0])
-            self.ants[k].add(x)
-            return True
-        else:
-            eta_aux = np.ones(len(self.p)) * np.random.rand()
-
+            self.ants[k].add(np.random.choice(np.where(self.ants[k].allowed==True)[0]))
+            return
+        
         aux_1 = (ant_r.allowed * self.pheromone) ** self.alpha  # tau_i ^ alpha
-        aux_2 = (ant_r.allowed * eta_aux) ** self.beta  # eta_i ^ beta
+        aux_2 = (ant_r.allowed * ((1.0 * self.p) / self.compute_avg_tightness_delta(ant_r.s))) ** self.beta  # eta_i ^ beta
 
         # P^k _i_p (t)
-        probs = aux_1 * aux_2 / np.dot(aux_1, aux_2)
-        probs = probs / np.sum(probs)
+        probs = (aux_1 * aux_2) / np.dot(aux_1, aux_2)
+        probs /= np.linalg.norm(probs, ord=1)
         
         # applying meta heuristic with q_o 
-        rand = np.random.rand()
-        aux = ( probs > rand) * probs
-        if (rand <= self.q_o) or np.all(aux == 0):
-            x = np.argmax(probs)
-        else:
-            aux[aux <= 0.0] = LONG_VAL
-            x = np.argmin(aux)
+        probs[probs < np.random.rand()] = LONG_VAL
 
         # move the ant using meta heuristic
-        self.ants[k].add(x)
-        return True
+        self.ants[k].add(np.argmin(probs))
 
     # Calculate allowed items for ant ants[k]
     def calculate_allowed(self, k: int):
@@ -159,17 +146,16 @@ class AsSubset:
     def update_objective_func(self, k: int):
         fit = np.dot(self.ants[k].s, self.p)
         # G(L_k) = Q * L_k
-        self.ants[k].profit = (1.0 * fit)# / np.sum(self.p)
+        self.ants[k].profit = (1.0 * fit) / np.sum(self.p)
         
         # VARIATION with >=
-        if self.ants[k].profit >= self.best_fit_profit:
-            #print(self.ants[k].s)
-            #print(self.p)
-            #print(self.ants[k].profit)
-            self.best_fit = self.ants[k].s
+        if fit >= self.best_fit_profit:
+            #print(str(self.ants[k].profit) + " > " + str(self.best_fit_profit))
+            self.best_fit = self.ants[k].s.tolist()
             self.best_fit_profit = fit
             # VARIATION to make the best profit more valuable
-            self.pheromone = (1-self.rho) * self.pheromone + self.rho* self.ants[k].profit * self.ants[k].s
+            self.pheromone *= (1-self.rho)
+            self.pheromone += self.ants[k].profit * self.ants[k].s
 
     # update pheromone
     def update_trails(self):
@@ -178,7 +164,8 @@ class AsSubset:
             delta_tau += ant.profit * ant.s
 
         # Variation to make each delta of ant counts less
-        delta_tau /= self.__N_ANTS
+        #delta_tau /= self.__N_ANTS
 
-        self.pheromone = (1-self.rho) * self.pheromone + self.rho* delta_tau
+        self.pheromone *= (1-self.rho)
+        self.pheromone += delta_tau
         self.pheromones.append(self.pheromone.tolist())
