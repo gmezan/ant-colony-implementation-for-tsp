@@ -180,5 +180,5 @@ class AsSubset:
         # Variation to make each delta of ant counts less
         delta_tau /= self.__N_ANTS
 
-        self.pheromone = (1-self.rho) * self.rho* self.pheromone + self.rho* delta_tau
+        self.pheromone = (1-self.rho) * self.pheromone + self.rho* delta_tau
         self.pheromones.append(self.pheromone.tolist())

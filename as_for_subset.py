@@ -74,7 +74,7 @@ def run_instance_0():
 
 def run_instance_1():
     NUMBER_OF_ANTS = 12
-    N_ITERS = 50
+    N_ITERS = 75
     ALPHA = 1.0
     BETA = 1.5
     RHO = 0.1
@@ -85,8 +85,8 @@ def run_instance_1():
     acs_for_subset(p=P, c=C, r=R, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=ALPHA, beta=BETA, rho=RHO)
 
 def run_instance_2():
-    NUMBER_OF_ANTS = 8
-    N_ITERS = 25
+    NUMBER_OF_ANTS = 20
+    N_ITERS = 100
     ALPHA = 1.0
     BETA = 1.5
     RHO = 0.05
@@ -97,4 +97,4 @@ def run_instance_2():
     acs_for_subset(p=P, c=C, r=R, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=ALPHA, beta=BETA, rho=RHO)
 
 
-run_instance_1()
+run_instance_2()
