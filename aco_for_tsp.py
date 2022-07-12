@@ -5,12 +5,12 @@ import numpy as np
 import pandas as pd
 
 DEFAULT_DIST = 1000000
-INSTANCE = 'resources/instance1.csv'
+INSTANCE = 'resources/instance10.csv'
 NUMBER_OF_ANTS = 20
 N_ITERS = 100
 ALPHA = 1.0
 BETA = 1.2
-RHO = 0.03
+RHO = 0.02
 
 evolution = []
 ants_evol = []

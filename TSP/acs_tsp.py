@@ -24,7 +24,7 @@ class AcsTsp:
         self.alpha = alpha  # weight for trails
         self.beta = beta    # weight for lengths (weights) (recommended beta > alpha)
         self.rho = rho      # trail/pheromone evaporation [0, 1]
-        self.q_o = np.random.rand()
+        self.q_o = 0.05 #np.random.rand()
         self.max_iter = max_iter;
         self.tau_o = 0.005
 

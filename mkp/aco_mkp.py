@@ -1,38 +1,44 @@
 import numpy as np
 from .Ant import Ant
 """
-
-IMPLEMENTATION OF: A New Version of Ant System for Subset Problems
-
-maximize Cj”=, pjxj
-subject to CY=, rijxj <= ci i = 1, ..., m, 
-xj E {0,1} j = 1, ... n
+We consider the problem where n items should be packed in m knapsacks
+ of distinct capacities ci, i = 1, . . . , m. Each item j has an associated 
+ value pj and weight wj, and the problem is to select m disjoined subsets of
+ items, such that subset i fits into capacity ci and the total profit of 
+ the se- lected items is maximized.
 """
 
 TINY_VAL = 0.0001
 LONG_VAL = 10000
 
-# One Knapsack
-class AsSubset:
-    def __init__(self, p: list, c: list, r: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3) -> None:
-        # Number of items: j = {0,1,2,..., n-1}
+# Multiple Knapsack
+"""
+p: value of items: p_j, j = {0...n-1}
+c: capacities of knapsacks: c_i, i = {0...m-1}
+w: weights of items: w_j
+"""
+class AcoMkp:
+    def __init__(self, p: list, c: list, w: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3) -> None:
+        # Number of items: p_j = {0,1,2,..., n-1}
         self.__N = len(p)
-        # Number of constraints: i = {0,1,2,..., m-1}
+        # Number of knapsacks: c_i = {0,1,2,..., m-1}
+        
         self.__M = len(c)
         # Number of ants
         self.__N_ANTS = n_ants
 
-        # Profit vector: pj of profit for item j
+        # Profit vector p[n]: pj of profit for item j
         self.p = np.array(p)
-        # Resources matrix: item j consumes rij units of resource i
-        self.r = np.array(r)
-        # Constraints matrix for resource i
+        # Weights vector w[n]: item j consumes wj units of capacity c_i
+        self.w = np.array(w)
+        # Constraints (capacities) c[m] vector for resource? c_i
         self.c = np.array(c)
+        # solution S_k (t) or "x" is x[m][n] 
 
-        # real pheromone[n][n] % pheromone matrix (pheromone trail tau)
-        self.pheromone = None;
+        # real pheromone[n][m] % pheromone matrix (pheromone trail tau)
+        self.pheromone = np.random.rand((self.__M, self.__N));
         # single_ant ant[m] % structure of type single_ant
-        self.ants = [Ant(self.__N) for _ in range(n_ants) ]
+        self.ants = [Ant(self.__M, self.__N) for _ in range(n_ants) ]
 
         # Hyper parameters:
         self.alpha = alpha  # weight for trails
@@ -40,6 +46,7 @@ class AsSubset:
         self.rho = rho      # trail/pheromone evaporation [0, 1]
         self.q_o = 0 #np.random.rand()
         self.max_iter = max_iter;
+        self.tau_o = 0.005
 
         # Parameters
         self.terminate = False;
@@ -51,13 +58,13 @@ class AsSubset:
 
     
     def init_random_pheromone_trails(self):
-        self.pheromone = np.random.rand(self.__N)
+        self.pheromone = np.random.rand((self.__M, self.__N))
         self.pheromones.append(self.pheromone.tolist())
 
     # x is the selection S^~ _k ( t )
     # u_i(k,t)
     def compute_consumption_mu(self, x):
-        return np.matmul(self.r, x)
+        return np.matmul(x, self.w)
 
     # y_i(k,t)
     def compute_remaining_gamma(self, x):
@@ -65,7 +72,7 @@ class AsSubset:
 
     # ∂_ij(k,t)
     def compute_tightness_delta(self, x):
-        return self.r / self.compute_remaining_gamma(x)[:,None]
+        return self.w / self.compute_remaining_gamma(x)[:,None]
 
     def compute_avg_tightness_delta(self, x):
         return self.compute_tightness_delta(x).mean(axis = 0)
@@ -73,20 +80,6 @@ class AsSubset:
     # compute pseudo utility: local heuristic
     def compute_pseudo_utility_eta(self, x):
         return self.p / self.compute_avg_tightness_delta(x)
-
-    def is_terminate(self) -> bool:
-        if self.terminate:
-            self.counter = 0
-            return True
-
-        self.counter += 1
-
-        if self.counter >= self.max_iter:
-            self.counter = 0
-            self.terminate = True
-            return True
-
-        return self.terminate
 
     def are_ants_done(self):
         return np.all(np.array([ant.done for ant in self.ants], dtype=bool) == True)
