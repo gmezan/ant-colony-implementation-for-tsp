@@ -76,8 +76,7 @@ class AcsTsp:
                 if (rand <= self.q_o) or np.all(aux == 0):
                     j = np.argmax(probs)
                 else:
-                    aux[aux <= 0.0] = LONG_VAL
-                    j = np.argmin(aux)
+                    j = (rand < probs.cumsum()).argmax()
 
                 # move the ant using meta heuristic
                 self.ants[k].visit(j, self.dist)

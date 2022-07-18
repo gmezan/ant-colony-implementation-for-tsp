@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 DEFAULT_DIST = 1000000
-INSTANCE = 'resources/instance10.csv'
+INSTANCE = 'resources/instance0.csv'
 NUMBER_OF_ANTS = 20
 N_ITERS = 100
 ALPHA = 1.0

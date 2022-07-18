@@ -162,3 +162,19 @@ def plot_subset_solution2(acs, evolution, ants_evol):
     plt.plot(acs.pheromones)
 
     plt.show()
+
+def plot_mkp_solution2(acs, evolution, ants_evol):
+    gs = gridspec.GridSpec(2, 2)
+
+    plt.figure()
+    ax = plt.subplot(gs[0, 0]) # row 0, col 0
+    plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
+
+    ax = plt.subplot(gs[0, 1]) # row 0, col 1
+    plt.plot(evolution, color='b')
+    plt.plot(ants_evol, color='r')
+
+    ax = plt.subplot(gs[1, :]) # row 1, span all columns
+    plt.plot(acs.pheromones[:][0][:])
+
+    plt.show()

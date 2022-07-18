@@ -29,5 +29,6 @@ class Ant:
         self.allowed.fill(True)
 
     def add(self, i: int, j:int):
+        self.step += 1
         self.s[i][j] = True
         self.tabu_list[i][j] = True

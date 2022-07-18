@@ -4,3 +4,5 @@ env/
 venv/
 *.pyc
 .idea
+.sh
+*.sh
