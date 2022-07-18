@@ -8,7 +8,7 @@ We consider the problem where n items should be packed in m knapsacks
  the se- lected items is maximized.
 """
 
-TINY_VAL = 0.0001
+TINY_VAL = 0.001
 LONG_VAL = 10000
 
 # Multiple Knapsack
@@ -29,19 +29,24 @@ capcities (servers):  c[i][l], pm c[i] has l constraints
 
 solution/selection:   x[i][j], x=1 when vm j placed in pm i
 
-profit:             p[j]
+profit:             p[j], 0 = dont place. 1 = best_effort, 2 = HPC
 
 weights:            w[j][l], vm j has w[j], a vector of size l with its constraints 
 
+oc: overcommitting for each dimension and for each server
+    oc[i][l] 
+
 """
-class AcoMkp:
-    def __init__(self, p: list, c: list, w: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3, kp_first = True) -> None:
+class AcoVmp:
+    def __init__(self, p: list, c: list, w: list, oc: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3, kp_first = True, w1=1, w2=1, w3=0.5) -> None:
         # Number of items: p_j = {0,1,2,..., n-1}
         self.__N = len(p)
         # Number of knapsacks: c_i = {0,1,2,..., m-1}
         self.__M = len(c)
         # Number of constraints
         self.__D = len(c[0])
+
+
 
         # Number of ants
         self.__N_ANTS = n_ants
@@ -51,7 +56,11 @@ class AcoMkp:
         # Weights vector w[j][l]: item j consumes wj units of capacity c_i
         self.w = np.array(w)
         # Constraints (capacities) c[i][l] vector for resource? c_i
-        self.c = np.array(c)
+        self.base_c = np.array(c)
+        self.oc = np.array(oc)
+        assert self.oc.shape == self.base_c.shape
+        self.c = self.base_c * self.oc
+        assert self.c.shape == self.base_c
 
         # solution S_k (t) or "x" is x[i][j] 
 
@@ -107,7 +116,7 @@ class AcoMkp:
 
     # compute pseudo utility: local heuristic
     def compute_pseudo_utility_eta(self, x):
-        return self.p / self.compute_avg_tightness_delta(x)
+        return self.compute_obj(x) / self.compute_avg_tightness_delta(x)
 
     def are_ants_done(self):
         return np.all(np.array([ant.done for ant in self.ants], dtype=bool) == True)
@@ -217,9 +226,14 @@ class AcoMkp:
             self.ants[k].reset()
 
     def update_objective_func(self, k: int):
-        fit = np.dot(self.ants[k].s, self.p).sum()
+        # TODO: update the objective function
+        #fit = np.dot(self.ants[k].s, self.p).sum()
+        fit = self.compute_obj(self.ants[k].s)
         # G(L_k) = Q * L_k
-        self.ants[k].profit = (1.0 * fit) / np.sum(self.p)
+        self.ants[k].profit = fit
+
+        if self.best_fit_profit == None:
+            self.best_fit_profit = fit
 
         # VARIATION with >=
         if fit >= self.best_fit_profit:
@@ -245,3 +259,33 @@ class AcoMkp:
         self.pheromone += delta_tau
         self.pheromones.append(self.pheromone.tolist())
         del delta_tau
+
+    """
+    Parameters: 
+        - x: current solution of ant, ants[k].s
+        
+    Returns 
+        - L^k_{ij}(ants[k].s): loss function of current ant solution and for each (i,j), shape=MxN
+    """
+    # compute_obj, compute_fit or compute_loss
+    def compute_obj(self, x):
+        return (self.p ** self.w3) / (self.w1 * self.interference_hpc(x) + self.w2 * self.cpu_oc_hpc(x))
+
+    def interference_hpc(self, x):
+        # find servers with HPC vms
+
+        p_hpc_vms = np.where(self.p == 2)[0]
+
+        servers_with_hpc = x[:,p_hpc_vms]
+
+
+
+        pass
+
+    def cpu_oc_hpc(self, x):
+        pass
+
+    def ram_oc_hpc(self, x):
+        pass
+
+    

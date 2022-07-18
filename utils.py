@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 import csv
 import matplotlib.gridspec as gridspec
+import seaborn as sns
 
 
 def plot_graph(graph: dict):
@@ -168,13 +169,24 @@ def plot_mkp_solution2(acs, evolution, ants_evol):
 
     plt.figure()
     ax = plt.subplot(gs[0, 0]) # row 0, col 0
-    plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
+    heat_map = sns.heatmap(acs.pheromone, xticklabels=False, yticklabels=False, cmap="YlGnBu")
+    plt.xlabel('Items')
+    plt.ylabel('KPs')
+    plt.title("Pheromone trails")
+    #plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
 
     ax = plt.subplot(gs[0, 1]) # row 0, col 1
-    plt.plot(evolution, color='b')
-    plt.plot(ants_evol, color='r')
+    heat_map = sns.heatmap(acs.best_fit, linewidths=.5, cmap='Blues')
+    plt.xlabel('Items')
+    plt.ylabel('KPs')
+    plt.title("Solution")
 
     ax = plt.subplot(gs[1, :]) # row 1, span all columns
-    plt.plot(acs.pheromones[:][0][:])
+    plt.plot(evolution, color='b')
+    plt.plot(ants_evol, color='r')
+    plt.legend(["Best tour", "Average ant tour"])
+    plt.title("Profit")
+    plt.xlabel('iterations')
+    plt.ylabel('Profit')
 
     plt.show()

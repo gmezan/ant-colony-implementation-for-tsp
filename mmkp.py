@@ -57,7 +57,7 @@ def acs_for_mmkp(p, c, w, n_ants, max_iter, alpha, beta, rho, kp_first=True, plo
 
     acs.init_random_pheromone_trails()
 
-    LONG_VAL_ITER = len(p)
+    LONG_VAL_ITER = len(p) + 1
 
     for i in range(max_iter):
         acs.start_ants()
@@ -77,7 +77,9 @@ def acs_for_mmkp(p, c, w, n_ants, max_iter, alpha, beta, rho, kp_first=True, plo
         acs.update_trails()
         evolution[i] = acs.best_fit_profit
         ants_evol[i] = np.mean([np.dot(ant.s, acs.p).sum() for ant in acs.ants])
-    print("SOLUTION: \n" + str(np.array(acs.best_fit) * 1.0) + ", " + str(acs.p[np.array(acs.best_fit).sum(axis=0) == 1]) + ", PROFIT: " + str(acs.best_fit_profit))
+    
+    # + str(np.array(acs.best_fit) * 1.0) + ", "
+    print("SOLUTION: "  + str(acs.p[np.array(acs.best_fit).sum(axis=0) == 1]) + ", PROFIT: " + str(acs.best_fit_profit))
     if plot:
         plot_mkp_solution2(acs, evolution, ants_evol)
 

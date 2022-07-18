@@ -5,7 +5,7 @@ from mmkp import *
 def mknap1_1():
     NUMBER_OF_ANTS = 5
     N_ITERS = 100
-    ALPHA = 1.0
+    ALPHA = 0.0
     BETA = 1.7
     RHO = 0.1
     KP_FIRST = True
