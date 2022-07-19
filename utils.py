@@ -190,3 +190,29 @@ def plot_mkp_solution2(acs, evolution, ants_evol):
     plt.ylabel('Profit')
 
     plt.show()
+
+def plot_mkp_solution3(acs, evolution):
+    gs = gridspec.GridSpec(2, 2)
+
+    plt.figure()
+    ax = plt.subplot(gs[0, 0]) # row 0, col 0
+    heat_map = sns.heatmap(acs.pheromone, xticklabels=False, yticklabels=False, cmap="YlGnBu")
+    plt.xlabel('Items')
+    plt.ylabel('KPs')
+    plt.title("Pheromone trails")
+    #plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
+
+    ax = plt.subplot(gs[0, 1]) # row 0, col 1
+    heat_map = sns.heatmap(acs.best_fit, linewidths=.5, cmap='Blues')
+    plt.xlabel('Items')
+    plt.ylabel('KPs')
+    plt.title("Solution")
+
+    ax = plt.subplot(gs[1, :]) # row 1, span all columns
+    plt.plot(evolution, color='b')
+    plt.legend(["Best tour"])
+    plt.title("Profit")
+    plt.xlabel('iterations')
+    plt.ylabel('Profit')
+
+    plt.show()

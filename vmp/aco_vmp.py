@@ -1,3 +1,4 @@
+from http import server
 import numpy as np
 from .Ant import Ant
 """
@@ -38,7 +39,7 @@ oc: overcommitting for each dimension and for each server
 
 """
 class AcoVmp:
-    def __init__(self, p: list, c: list, w: list, oc: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3, kp_first = True, w1=1, w2=1, w3=0.5) -> None:
+    def __init__(self, p: list, c: list, w: list, oc: list, n_ants: int, max_iter = 1000000, alpha = 0.5, beta = 1, rho = 0.3, kp_first = True, w1=1, w2=1, w3=0.5, tau_max = 20, tau_min = 0.1) -> None:
         # Number of items: p_j = {0,1,2,..., n-1}
         self.__N = len(p)
         # Number of knapsacks: c_i = {0,1,2,..., m-1}
@@ -60,7 +61,7 @@ class AcoVmp:
         self.oc = np.array(oc)
         assert self.oc.shape == self.base_c.shape
         self.c = self.base_c * self.oc
-        assert self.c.shape == self.base_c
+        assert self.c.shape == self.base_c.shape
 
         # solution S_k (t) or "x" is x[i][j] 
 
@@ -78,20 +79,27 @@ class AcoVmp:
         self.tau_o = 0.005
         self.kp_first = kp_first
 
+        self.tau_max = tau_max
+        self.tau_min = tau_min
+
         # Parameters
         self.terminate = False;
         self.counter = 0
         self.best_fit = None
         self.best_fit_profit = 0.0
 
+        self.w1 = w1
+        self.w2 = w2
+        self.w3 = w3
+
         # Transients
-        self.pheromones = []
+        #self.pheromones = []
         self.init_allowed = np.ones((self.__M, self.__N))
 
     
     def init_random_pheromone_trails(self):
         self.pheromone = np.random.rand(self.__M, self.__N)
-        self.pheromones.append(self.pheromone.tolist())
+        #self.pheromones.append(self.pheromone.tolist())
 
     # must return a [i][l] matrix containing current resources being used
     def compute_consumption_mu(self, x):
@@ -116,7 +124,7 @@ class AcoVmp:
 
     # compute pseudo utility: local heuristic
     def compute_pseudo_utility_eta(self, x):
-        return self.compute_obj(x) / self.compute_avg_tightness_delta(x)
+        return (self.p ** self.w3) * self.compute_obj(x) / self.compute_avg_tightness_delta(x)
 
     def are_ants_done(self):
         return np.all(np.array([ant.done for ant in self.ants], dtype=bool) == True)
@@ -228,7 +236,8 @@ class AcoVmp:
     def update_objective_func(self, k: int):
         # TODO: update the objective function
         #fit = np.dot(self.ants[k].s, self.p).sum()
-        fit = self.compute_obj(self.ants[k].s)
+
+        fit = self.compute_obj(self.ants[k].s) # np.dot(self.ants[k].s, self.co(self.ants[k].s)).sum() / np.sum(self.p)
         # G(L_k) = Q * L_k
         self.ants[k].profit = fit
 
@@ -243,6 +252,8 @@ class AcoVmp:
             # VARIATION to make the best profit more valuable
             self.pheromone *= (1-self.rho)
             self.pheromone += self.ants[k].profit * self.ants[k].s
+
+            self.apply_tau_max_min()
         
         del fit
 
@@ -256,9 +267,11 @@ class AcoVmp:
         #delta_tau /= self.__N_ANTS
 
         self.pheromone *= (1-self.rho)
-        self.pheromone += delta_tau
-        self.pheromones.append(self.pheromone.tolist())
+        self.pheromone += delta_tau/self.__N_ANTS
+        #self.pheromones.append(self.pheromone.tolist())
         del delta_tau
+
+        self.apply_tau_max_min()
 
     """
     Parameters: 
@@ -267,25 +280,44 @@ class AcoVmp:
     Returns 
         - L^k_{ij}(ants[k].s): loss function of current ant solution and for each (i,j), shape=MxN
     """
-    # compute_obj, compute_fit or compute_loss
+
     def compute_obj(self, x):
-        return (self.p ** self.w3) / (self.w1 * self.interference_hpc(x) + self.w2 * self.cpu_oc_hpc(x))
+        obj =  np.matmul(x, self.p).sum() / ( self.p.sum() * ((self.interference_hpc(x) ** self.w1) * (self.cpu_oc_hpc(x) * self.ram_oc_hpc(x)) ** self.w2) )
+        #print(obj)
+        return obj
 
     def interference_hpc(self, x):
         # find servers with HPC vms
+        p_hpc_vms = np.where(self.p >= 2)[0]
 
-        p_hpc_vms = np.where(self.p == 2)[0]
+        #num_cpus_hpc_per_server_per_vm = np.zeros(x.shape)
+        #num_cpus_hpc_per_server_per_vm[:,p_hpc_vms] = x[:,p_hpc_vms]
+        #num_cpus_hpc_per_server_per_vm *= self.w[:,0]
 
-        servers_with_hpc = x[:,p_hpc_vms]
+        # compute total interference in vm
+        # p * numCPUs; Assuming l=0: num CPUs 
+        num_p_cpus_per_vm_per_server = x * self.w[:,0] * self.p
+        num_p_cpus_HPC_per_vm_per_server = np.zeros(x.shape)
+        num_p_cpus_HPC_per_vm_per_server[:,p_hpc_vms] = num_p_cpus_per_vm_per_server[:,p_hpc_vms]
+        
+        num_p_cpus_per_server = num_p_cpus_per_vm_per_server.sum(axis = 1)
 
+        aux = num_p_cpus_HPC_per_vm_per_server.sum(axis = 1)
 
+        filter_zero = np.where(aux > 0)[0]
 
-        pass
+        if len(filter_zero) == 0:
+            return 1
+        else:
+            return (num_p_cpus_per_server[filter_zero]/aux[filter_zero]).mean()
 
     def cpu_oc_hpc(self, x):
-        pass
+        # AVG OC CPU
+        return (np.matmul(x, self.w[:,0]) / self.base_c[:,0]).mean()
 
     def ram_oc_hpc(self, x):
-        pass
+        return (np.matmul(x, self.w[:,1]) / self.base_c[:,1]).mean()
 
-    
+    def apply_tau_max_min(self):
+        self.pheromone[self.pheromone < self.tau_min] = self.tau_min
+        self.pheromone[self.pheromone > self.tau_max] = self.tau_max
