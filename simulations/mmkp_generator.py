@@ -53,4 +53,6 @@ def generate_mmkp_instance(M, N, D):
     print(filename)
     return filename
 
-generate_mmkp_instance(30,12,3)
+generate_mmkp_instance(25,8,3)
+generate_mmkp_instance(25,8,3)
+generate_mmkp_instance(25,8,3)

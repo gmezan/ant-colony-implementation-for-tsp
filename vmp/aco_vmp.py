@@ -282,7 +282,7 @@ class AcoVmp:
     """
 
     def compute_obj(self, x):
-        obj =  np.matmul(x, self.p).sum() / ( self.p.sum() * ((self.interference_hpc(x) ** self.w1) * (self.cpu_oc_hpc(x) * self.ram_oc_hpc(x)) ** self.w2) )
+        obj =  np.matmul(x, self.p).sum() / ( self.p.sum() * (1 + ((self.interference_hpc(x) ** self.w1) * (self.cpu_oc_hpc(x) * self.ram_oc_hpc(x)) ** self.w2) ))
         #print(obj)
         return obj
 

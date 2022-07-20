@@ -196,14 +196,14 @@ def plot_mkp_solution3(acs, evolution):
 
     plt.figure()
     ax = plt.subplot(gs[0, 0]) # row 0, col 0
-    heat_map = sns.heatmap(acs.pheromone, xticklabels=False, yticklabels=False, cmap="YlGnBu")
+    heat_map = sns.heatmap(acs.pheromone, linewidths=.5, xticklabels=False, yticklabels=False, cmap="YlGnBu")
     plt.xlabel('Items')
     plt.ylabel('KPs')
     plt.title("Pheromone trails")
     #plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
 
     ax = plt.subplot(gs[0, 1]) # row 0, col 1
-    heat_map = sns.heatmap(acs.best_fit, linewidths=.5, cmap='Blues')
+    heat_map = sns.heatmap(acs.best_fit, linewidths=.5, xticklabels=False, yticklabels=False, cmap='Blues')
     plt.xlabel('Items')
     plt.ylabel('KPs')
     plt.title("Solution")
