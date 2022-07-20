@@ -24,7 +24,7 @@ def get_ins01():
 
 def rho_tunning():
 
-    rhos = 0.5 * np.array(range(100)) / 100
+    rhos = 1 * np.array(range(100)) / 100
 
     c,p,w,oc = get_ins01()
 
@@ -40,7 +40,7 @@ def rho_tunning():
 
 def beta_tunning():
 
-    betas = 5 * np.array(range(50)) / 50
+    betas = 5 * np.array(range(100)) / 100
 
     c,p,w,oc = get_ins01()
 
@@ -56,7 +56,7 @@ def beta_tunning():
 
 def alpha_tunning():
 
-    alphas = 2.5 * np.array(range(50)) / 50
+    alphas = 2.5 * np.array(range(100)) / 100
 
     c,p,w,oc = get_ins01()
 

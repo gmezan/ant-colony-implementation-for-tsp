@@ -288,7 +288,7 @@ class AcoVmp:
 
     def interference_hpc(self, x):
         # find servers with HPC vms
-        p_hpc_vms = np.where(self.p >= 2)[0]
+        #p_hpc_vms = np.where(self.p >= 2)[0]
 
         #num_cpus_hpc_per_server_per_vm = np.zeros(x.shape)
         #num_cpus_hpc_per_server_per_vm[:,p_hpc_vms] = x[:,p_hpc_vms]
@@ -296,13 +296,26 @@ class AcoVmp:
 
         # compute total interference in vm
         # p * numCPUs; Assuming l=0: num CPUs 
-        num_p_cpus_per_vm_per_server = x * self.w[:,0] * self.p
-        num_p_cpus_HPC_per_vm_per_server = np.zeros(x.shape)
-        num_p_cpus_HPC_per_vm_per_server[:,p_hpc_vms] = num_p_cpus_per_vm_per_server[:,p_hpc_vms]
+        #num_p_cpus_per_vm_per_server = x * self.w[:,0] * self.p
+        #num_p_cpus_HPC_per_vm_per_server = np.zeros(x.shape)
+        #num_p_cpus_HPC_per_vm_per_server[:,p_hpc_vms] = num_p_cpus_per_vm_per_server[:,p_hpc_vms]
         
-        num_p_cpus_per_server = num_p_cpus_per_vm_per_server.sum(axis = 1)
+        #num_p_cpus_per_server = num_p_cpus_per_vm_per_server.sum(axis = 1)
 
-        aux = num_p_cpus_HPC_per_vm_per_server.sum(axis = 1)
+        #aux = num_p_cpus_HPC_per_vm_per_server.sum(axis = 1)
+
+        coeff = 0
+        zz = 0
+        aux_2 = (x * self.p) * self.w[:,0]
+        count = 0
+        for [i,j] in np.transpose(np.where((x * self.p) >= 2)): # hpcs
+            count +=1
+            zz = aux_2[i,:].sum()
+            coeff += (zz - aux_2[i][j]) / zz
+
+        if count == 0:
+            return 0.5
+        return coeff / count
 
         filter_zero = np.where(aux > 0)[0]
 

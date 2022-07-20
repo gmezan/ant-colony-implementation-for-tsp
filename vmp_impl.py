@@ -1,4 +1,3 @@
-from mmkp_ins5 import N_ITERS
 from vmp.aco_vmp import *
 import numpy as np
 from utils import *
@@ -122,7 +121,7 @@ def round_robin_vmp(p, c, w, oc, max_iter):
         j_placed = False
         i_aux = i_counter
         i_aux_counter = 0
-        while (not j_placed) or (i_aux_counter >= i_max):
+        while (not j_placed) and (i_aux_counter <= i_max):
             # if placement is allowed
             if allowed[i_aux][j]:
                 acs.ants[k].add(i_aux,j)
@@ -143,13 +142,16 @@ def round_robin_vmp(p, c, w, oc, max_iter):
         else:
             i_counter += 1
 
+    acs.best_fit = acs.ants[0].s
     solution = acs.p[np.array(acs.ants[k].s).sum(axis=0) == 1]
     #total_vms = len(solution)
     #total_hpcs = len(solution[solution ==2])
-    evolution = np.array(evolution)
+    evolution = np.ones(max_iter) * acs.ants[k].profit
+    acs.best_fit_profit = acs.ants[k].profit
     #print("SOLUTION: "  + str(solution) + ", PROFIT: " + str(acs.ants[k].profit) + ", #HPC: " + str(total_hpcs) + ", BE: " + str(total_vms - total_hpcs))
-    if len(evolution) < max_iter:
-        aux_evol = np.ones(max_iter)*acs.ants[k].profit
-        aux_evol[0:len(evolution)] = evolution
+    #if len(evolution) < max_iter:
+    #    aux_evol = np.ones(max_iter) * acs.ants[k].profit
+    #    aux_evol[0:len(evolution)] = evolution
+    #    evolution = aux_evol
     
     return acs, evolution, solution

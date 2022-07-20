@@ -203,7 +203,7 @@ def plot_mkp_solution3(acs, evolution):
     #plt.bar(range(len(acs.pheromone.sum(axis=0))), acs.pheromone.sum(axis = 0))
 
     ax = plt.subplot(gs[0, 1]) # row 0, col 1
-    heat_map = sns.heatmap(acs.best_fit, linewidths=.5, xticklabels=False, yticklabels=False, cmap='Blues')
+    heat_map = sns.heatmap(acs.best_fit * acs.p, linewidths=.5, xticklabels=False, yticklabels=False, cmap='Blues')
     plt.xlabel('Items')
     plt.ylabel('KPs')
     plt.title("Solution")
@@ -215,4 +215,24 @@ def plot_mkp_solution3(acs, evolution):
     plt.xlabel('iterations')
     plt.ylabel('Profit')
 
+    plt.show()
+
+
+def plot_vmp_solution1(acs, evolution):
+    gs = gridspec.GridSpec(1, 2)
+
+    plt.figure()
+    ax = plt.subplot(gs[0, 0]) # row 0, col 0
+    plt.plot(evolution, color='b')
+    plt.title("Algorithm evolution")
+    plt.xlabel('iterations')
+    plt.ylabel('Objective Function')
+
+    ax = plt.subplot(gs[0, 1]) # row 0, col 1
+    heat_map = sns.heatmap(acs.best_fit * acs.p, linewidths=.5, xticklabels=False, yticklabels=False, cmap='Blues')
+    plt.xlabel('VMs')
+    plt.ylabel('PMs')
+    plt.title("Solution")
+
+    
     plt.show()

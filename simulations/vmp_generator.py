@@ -38,11 +38,11 @@ def generate_vmp_instance(M, N, D = 2):
 
     COEFF_SERVER = 4
     # CPUs
-    c_d0_chooser = np.array([0.5,1,2,4,6,8,10,12,24]) * COEFF_SERVER
+    c_dn_chooser = np.array([8,10,12,24]) * COEFF_SERVER
     # RAM
-    c_d1_chooser = np.array([0.5,1,2,4,6,8,10,12,24,32,64])* COEFF_SERVER
+    c_d0_chooser = np.array([6,8,10])* COEFF_SERVER
     # Other d
-    c_dn_chooser = np.array([1,2,4,6,8,10,12,14,16,18,20])* COEFF_SERVER
+    c_d1_chooser = np.array([16,18,20,22])* COEFF_SERVER
 
     for j in range(M):
         p.append(np.random.choice(p_chooser))
@@ -94,4 +94,4 @@ def generate_vmp_instance(M, N, D = 2):
     print(filename)
     return filename
 
-generate_vmp_instance(40,4,2)
+generate_vmp_instance(100,12,2)
