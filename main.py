@@ -14,6 +14,22 @@ W1 = 1
 W2 = 1
 W3 = 2.0
 
+def ins00():
+    c = [[24, 88], [40, 72], [32, 64]]
+    p = [2, 1, 1, 1, 1, 2, 1, 1, 2, 1]
+    w = [[2.0, 2.0], [8.0, 24.0], [6.0, 1.0], [10.0, 0.5], [12.0, 2.0], [1.0, 24.0], [24.0, 8.0], [6.0, 4.0], [10.0, 8.0], [6.0, 10.0]]
+    oc = [[16.0, 5.0], [16.0, 5.0], [16.0, 5.0]]
+    NUMBER_OF_ANTS = 6
+    N_ITERS = 50
+    ALPHA = 1.0
+    BETA = 1.2
+    RHO = 0.02
+    KP_FIRST = False
+    W1 = 1
+    W2 = 1
+    W3 = 2.0
+    return c,p,w,oc, NUMBER_OF_ANTS, N_ITERS, ALPHA, BETA, RHO, KP_FIRST, W1, W2, W3
+
 
 # 45 VMs, 10 PMs, 2 D
 def ins01():
@@ -118,6 +134,23 @@ def ins06():
     W3 = 1.5
     return c,p,w,oc, NUMBER_OF_ANTS, N_ITERS, ALPHA, BETA, RHO, KP_FIRST, W1, W2, W3
 
+# generate_vmp_instance(50,8,2)
+def ins06_5():
+    c = [[40, 88], [40, 80], [24, 88], [32, 88], [24, 64], [24, 72], [40, 88], [24, 80]]
+    p = [2, 1, 2, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 2]
+    w = [[24.0, 32.0], [1.0, 64.0], [8.0, 0.5], [8.0, 1.0], [24.0, 0.5], [8.0, 32.0], [2.0, 32.0], [6.0, 4.0], [12.0, 24.0], [4.0, 64.0], [10.0, 32.0], [12.0, 4.0], [8.0, 24.0], [12.0, 0.5], [4.0, 12.0], [8.0, 0.5], [0.5, 32.0], [12.0, 64.0], [8.0, 12.0], [0.5, 1.0], [12.0, 24.0], [4.0, 64.0], [6.0, 6.0], [24.0, 1.0], [0.5, 2.0], [12.0, 2.0], [1.0, 64.0], [24.0, 4.0], [12.0, 6.0], [8.0, 8.0], [4.0, 8.0], [4.0, 0.5], [6.0, 64.0], [8.0, 12.0], [6.0, 0.5], [6.0, 6.0], [0.5, 64.0], [10.0, 12.0], [8.0, 2.0], [4.0, 8.0], [6.0, 24.0], [12.0, 24.0], [24.0, 10.0], [1.0, 1.0], [1.0, 6.0], [1.0, 12.0], [8.0, 32.0], [8.0, 2.0], [1.0, 12.0], [12.0, 6.0]]
+    oc = [[16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0]]
+    NUMBER_OF_ANTS = 10
+    N_ITERS = 80
+    ALPHA = 1.0
+    BETA = 3
+    RHO = 0.02
+    KP_FIRST = False
+    W1 = 1
+    W2 = 1
+    W3 = 1.5
+    return c,p,w,oc, NUMBER_OF_ANTS, N_ITERS, ALPHA, BETA, RHO, KP_FIRST, W1, W2, W3
+
 # generate_vmp_instance(20,4,3)
 def ins07_5():
     c = [[32, 80, 32], [40, 64, 48], [24, 72, 48], [32, 72, 48]]
@@ -158,8 +191,8 @@ def ins08():
     p = [2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 1]
     w = [[0.5, 4.0], [0.5, 10.0], [8.0, 4.0], [1.0, 1.0], [1.0, 1.0], [8.0, 2.0], [1.0, 12.0], [12.0, 0.5], [10.0, 10.0], [2.0, 4.0], [8.0, 6.0], [0.5, 4.0], [8.0, 4.0], [12.0, 8.0], [4.0, 64.0], [12.0, 0.5], [24.0, 4.0], [0.5, 4.0], [24.0, 32.0], [8.0, 6.0], [8.0, 8.0], [24.0, 24.0], [12.0, 32.0], [1.0, 10.0], [8.0, 64.0], [6.0, 24.0], [0.5, 6.0], [10.0, 64.0], [6.0, 32.0], [0.5, 8.0], [1.0, 1.0], [8.0, 8.0], [6.0, 4.0], [1.0, 0.5], [1.0, 64.0], [10.0, 64.0], [6.0, 2.0], [12.0, 2.0], [2.0, 8.0], [8.0, 64.0], [24.0, 32.0], [8.0, 10.0], [10.0, 12.0], [12.0, 4.0], [1.0, 8.0], [12.0, 0.5], [8.0, 24.0], [8.0, 64.0], [24.0, 6.0], [1.0, 4.0]]
     oc = [[16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0], [16.0, 5.0]]
-    NUMBER_OF_ANTS = 10
-    N_ITERS = 75
+    NUMBER_OF_ANTS = 8
+    N_ITERS = 100
     ALPHA = 1.0
     BETA = 3
     RHO = 0.02
@@ -187,7 +220,7 @@ def ins09():
     return c,p,w,oc, NUMBER_OF_ANTS, N_ITERS, ALPHA, BETA, RHO, KP_FIRST, W1, W2, W3
 
 def get_ins():
-    return ins09()
+    return ins08()
 
 def run_rr():
     c,p,w,oc,NUMBER_OF_ANTS,N_ITERS,ALPHA,BETA,RHO,KP_FIRST,W1,W2,W3 = get_ins()
@@ -219,6 +252,35 @@ def run_algorithms0():
     plt.ylabel('Objective')
     plt.show()
 
+def run_algorithms1():
+    c,p,w,oc,NUMBER_OF_ANTS,N_ITERS,ALPHA,BETA,RHO,KP_FIRST,W1,W2,W3 = get_ins()
+
+    evol_aco = np.zeros(N_ITERS)
+    evol_greedy = np.zeros(N_ITERS)
+
+    C = 50
+
+    for i in range(C):
+        print("Running test: " + str(i))
+        x_aco, x_evol_aco, sol_aco = aco_for_vmp_headless_2(p=p, c=c, w=w, oc=oc, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=ALPHA, beta=BETA, rho=RHO, kp_first=KP_FIRST, w1=W1, w2=W2, w3=W3)
+        x_greedy, x_evol_greedy, sol_greedy = aco_for_vmp_headless_2(p=p, c=c, w=w, oc=oc, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=0, beta=BETA, rho=RHO, kp_first=KP_FIRST, w1=W1, w2=W2, w3=W3)
+        evol_aco += x_evol_aco
+        evol_greedy += x_evol_greedy
+
+    evol_aco /=C
+    evol_greedy /=C
+
+    rr, evol_rr, sol_rr = round_robin_vmp(p=p, c=c, w=w, oc=oc, max_iter=N_ITERS)
+
+    plt.plot(evol_aco, color='b')
+    plt.plot(evol_greedy, color='r')
+    plt.plot(evol_rr, color='g')
+    plt.legend(["Avg ACO-VMP", "Avg Greedy", "Avg Round Robin"])
+    plt.title("Results " + str(C) + " Experiments")
+    plt.xlabel('iterations')
+    plt.ylabel('Objective')
+    plt.show()
+
 def run_algorithms():
     c,p,w,oc,NUMBER_OF_ANTS,N_ITERS,ALPHA,BETA,RHO,KP_FIRST,W1,W2,W3 = get_ins()
     aco, evol_aco, sol_aco = aco_for_vmp_headless_2(p=p, c=c, w=w, oc=oc, n_ants=NUMBER_OF_ANTS, max_iter=N_ITERS, alpha=ALPHA, beta=BETA, rho=RHO, kp_first=KP_FIRST, w1=W1, w2=W2, w3=W3)
@@ -237,4 +299,4 @@ def run_algorithms():
 
 
 
-run_algorithms0()
+run_algorithms1()

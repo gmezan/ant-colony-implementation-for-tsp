@@ -94,4 +94,4 @@ def generate_vmp_instance(M, N, D = 2):
     print(filename)
     return filename
 
-generate_vmp_instance(100,12,2)
+generate_vmp_instance(50,8,2)
