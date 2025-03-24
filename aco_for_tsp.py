@@ -3,6 +3,7 @@ from TSP.Ant import *
 from utils import *
 import numpy as np
 import pandas as pd
+import sys
 
 DEFAULT_DIST = 1000000
 INSTANCE = 'resources/instance0.csv'
@@ -60,5 +61,9 @@ def initialize_data(instance: str):
 
     return aco, graph, nodes
 
+i = INSTANCE
 
-acs_for_tsp(INSTANCE)
+if len(sys.argv) > 1:
+    i = sys.argv[1]
+
+acs_for_tsp(i)
