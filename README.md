@@ -11,18 +11,23 @@ This project implements the **Ant Colony Optimization (ACO)** algorithm to solve
 
 ## 🔧 Installation
 1. Clone the repository:
+    ```bash
+    git clone https://github.com/gmezan/ant-colony-implementation-for-tsp.git
+    cd ant-colony-implementation-for-tsp
+    ```
 
-2. Create a python env and install requirements
-    ```python
+3. Create a python env and install requirements:
+    ```bash
     pip install -r requirements.txt
     ```
-3. Run the script with a sample dataset:
-    ```python
+    
+4. Run the script with a sample dataset:
+    ```bash
     python aco_for_tsp.py # takes default dataset
 
     python aco_for_tsp.py resources/instance2.csv # takes another dataset
 
     python aco_for_tsp.py custom.csv # custom dataset
     ```
-4. Example taking `resources/instance1.csv`:
+5. Example taking `resources/instance1.csv`:
 ![alt text](https://raw.githubusercontent.com/gmezan/ant-colony-implementation-for-tsp/main/example/example.png)
